@@ -99,30 +99,23 @@ void MakeScene(void)
 
 	// Create systems
 	SampleParticle* sphere1 = new SampleParticle( "sphere1" );
-	SampleParticle* rose1 = new SampleParticle("rose1");
 
 	// Register systems
 	success = GlobalResourceManager::use()->addSystem( sphere1, true );
 	// make sure it was registered successfully
 	assert( success );
 	
-	success = GlobalResourceManager::use()->addSystem(rose1, true);
-	assert(success);
 
 	// Create simulators
-	OscillateSimulator* oscSim1 = new OscillateSimulator("osc1", sphere1);
+	SampleGravitySimulator* gravSim1 = new SampleGravitySimulator("grav1", sphere1);
 
-	CircleSimulator* circleSimulator = new CircleSimulator("circle1", rose1);
 
 	// Register simulators
-	success = GlobalResourceManager::use()->addSimulator(oscSim1);
+	success = GlobalResourceManager::use()->addSimulator(gravSim1);
 
 	// make sure it was registered successfully
 	assert( success );
 
-	success = GlobalResourceManager::use()->addSimulator(circleSimulator);
-
-	assert(success);
 
 	/* END SAMPLE SCENE */
 
@@ -138,22 +131,16 @@ void MakeScene(void)
 	// make sure you got it
 	assert( sampleSystemRetrieval );
 
-	sampleSystemRetrieval = GlobalResourceManager::use()->getSystem("rose1");
-
-	assert(sampleSystemRetrieval);
 
 	BaseSimulator* sampleSimulatorRetrieval;
 
 	// retrieve the simulator
 	sampleSimulatorRetrieval = 
-		GlobalResourceManager::use()->getSimulator( "osc1" );
+		GlobalResourceManager::use()->getSimulator( "grav1" );
 
 	// make sure you got it
 	assert( sampleSimulatorRetrieval );
 
-	sampleSimulatorRetrieval = GlobalResourceManager::use()->getSimulator("circle1");
-
-	assert(sampleSimulatorRetrieval);
 
 }	// MakeScene
 

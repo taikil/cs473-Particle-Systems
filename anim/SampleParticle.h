@@ -1,5 +1,5 @@
-#ifndef MY_PARTICLE_H
-#define MY_PARTICLE_H
+#ifndef MY_SAMPLE_PARTICLE_H
+#define MY_SAMPLE_PARTICLE_H
 
 /*
 
