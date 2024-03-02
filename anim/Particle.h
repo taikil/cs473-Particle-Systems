@@ -26,8 +26,9 @@ class Particle : public BaseSystem
 
 public:
     Particle(const std::string& name);
-    virtual void getState(glm::vec3& position);
-    virtual void setState(const glm::vec3& position);
+    Particle(const std::string& name, const glm::vec3& initialPosition, const glm::vec3& initialVelocity);
+    virtual void getState(double* p);
+    virtual void setState(double* p);
     void reset(double time);
 
     void display(GLenum mode = GL_RENDER);

@@ -1,44 +1,57 @@
-#ifndef MY_PARTICLE_SIMULATOR_H
-#define MY_PARTICLE_SIMULATOR_H
+#ifndef MY_PARTICLE_SYS_H
+#define MY_PARTICLE_SYS_H
 
-#include <GLModel/GLModel.h>
+/*
+
+    This is a sample system. It accepts the command "read" followed by the
+    path to an OBJ model.
+
+*/
+
+#include "BaseSystem.h"
 #include <shared/defs.h>
 #include <util/util.h>
 #include "animTcl.h"
-#include "BaseSimulator.h"
-#include "BaseSystem.h"
+#include <GLmodel/GLmodel.h>
+#include "Particle.h"
 
-#include <string>
+#include <vector>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
-// a sample simulator
+#include "shared/opengl.h"
 
-class ParticleSystem : public BaseSimulator
+// a sample system
+class ParticleSystem : public BaseSystem
 {
+
 public:
+    ParticleSystem(const std::string& name);
+    virtual void getState(double* p);
+    virtual void setState(double* p);
+    void reset(double time);
 
-	ParticleSystem(const std::string& name, BaseSystem* target);
-	~ParticleSystem();
+    void display(GLenum mode = GL_RENDER);
 
-	int step(double time);
-	int init(double time)
-	{
-		m_object->getState(m_pos0);
-		setVector(m_vel0, 0, 0, 0);
-		return 0;
-	};
-
-	int command(int argc, myCONST_SPEC char** argv) { return TCL_OK; }
+    void readModel(char* fname) { m_model.ReadOBJ(fname); }
+    void flipNormals(void) { glmReverseWinding(&m_model); }
+    int command(int argc, myCONST_SPEC char** argv);
 
 protected:
 
-	Vector m_pos0; // initial position
-	Vector m_vel0; // initial velocity
-	Vector m_pos;
-	Vector m_vel;
+    float m_sx;
+    float m_sy;
+    float m_sz;
 
-	BaseSystem* m_object;
+    glm::vec3 p_pos;
+    glm::vec3 p_vel;
+
+    int numParticles = 0;
+
+
+    GLMmodel m_model;
+    std::vector<Particle> particles; 
 
 };
-
-
 #endif

@@ -24,6 +24,8 @@
 #include "SampleParticle.h"
 #include "SampleGravitySimulator.h"
 #include "CircleSimulator.h"
+#include "Particle.h"
+#include "ParticleSimulator.h"
 #include "OscillateSimulator.h"
 
 //#include <util/jama/tnt_stopwatch.h>
@@ -98,20 +100,33 @@ void MakeScene(void)
 	bool success;
 
 	// Create systems
-	SampleParticle* sphere1 = new SampleParticle( "sphere1" );
+	//SampleParticle* sphere1 = new SampleParticle( "sphere1" );
+
+	Particle* particles = new Particle( "particles" );
 
 	// Register systems
-	success = GlobalResourceManager::use()->addSystem( sphere1, true );
+	//success = GlobalResourceManager::use()->addSystem( sphere1, true );
 	// make sure it was registered successfully
-	assert( success );
+	//assert( success );
+
+	success = GlobalResourceManager::use()->addSystem( particles, true );
 	
 
 	// Create simulators
-	SampleGravitySimulator* gravSim1 = new SampleGravitySimulator("grav1", sphere1);
+	//SampleGravitySimulator* gravSim1 = new SampleGravitySimulator("grav1", sphere1);
 
 
 	// Register simulators
-	success = GlobalResourceManager::use()->addSimulator(gravSim1);
+	//success = GlobalResourceManager::use()->addSimulator(gravSim1);
+
+	// make sure it was registered successfully
+	//assert( success );
+
+	ParticleSimulator* particleSim = new ParticleSimulator("particleSim", particles);
+
+
+	// Register simulators
+	success = GlobalResourceManager::use()->addSimulator(particleSim);
 
 	// make sure it was registered successfully
 	assert( success );
@@ -125,18 +140,25 @@ void MakeScene(void)
 	BaseSystem* sampleSystemRetrieval;
 
 	// retrieve the system
+	//sampleSystemRetrieval = 
+		//GlobalResourceManager::use()->getSystem( "sphere1" );
+
+	// make sure you got it
+	//assert( sampleSystemRetrieval );
+
 	sampleSystemRetrieval = 
-		GlobalResourceManager::use()->getSystem( "sphere1" );
+		GlobalResourceManager::use()->getSystem( "particles" );
 
 	// make sure you got it
 	assert( sampleSystemRetrieval );
+
 
 
 	BaseSimulator* sampleSimulatorRetrieval;
 
 	// retrieve the simulator
 	sampleSimulatorRetrieval = 
-		GlobalResourceManager::use()->getSimulator( "grav1" );
+		GlobalResourceManager::use()->getSimulator( "particleSim" );
 
 	// make sure you got it
 	assert( sampleSimulatorRetrieval );
