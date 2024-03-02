@@ -31,6 +31,8 @@ public:
     virtual void setState(double* p);
     void reset(double time);
 
+    void setVelocity(const glm::vec3& velocity); 
+
     void display(GLenum mode = GL_RENDER);
 
     void readModel(char* fname) { m_model.ReadOBJ(fname); }

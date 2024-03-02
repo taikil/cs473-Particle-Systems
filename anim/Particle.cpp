@@ -23,7 +23,6 @@ Particle::Particle(const std::string& name, const glm::vec3& initialPosition, co
 
 void Particle::getState(double* p)
 {
-	// Assuming p is a 3-element array to represent the particle position
 	p[0] = static_cast<double>(p_pos.x);
 	p[1] = static_cast<double>(p_pos.y);
 	p[2] = static_cast<double>(p_pos.z);
@@ -31,7 +30,6 @@ void Particle::getState(double* p)
 
 void Particle::setState(double* p)
 {
-	// Assuming p is a 3-element array representing the new particle position
 	p_pos = glm::vec3(static_cast<float>(p[0]), static_cast<float>(p[1]), static_cast<float>(p[2]));
 }
 
@@ -39,6 +37,11 @@ void Particle::setState(double* p)
 void Particle::reset(double time)
 {
 	p_pos = glm::vec3(0.0f, 0.0f, 0.0f);
+}
+
+void Particle::setVelocity(const glm::vec3& velocity)
+{
+	p_vel = velocity;
 }
 
 int Particle::command(int argc, myCONST_SPEC char** argv)
