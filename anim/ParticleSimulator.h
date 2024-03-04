@@ -11,6 +11,7 @@
 #include "BaseSystem.h"
 #include "Particle.h"
 #include "ParticleSystem.h"
+#include "Spring.h"
 #include "ResourceManager.h"
 
 #include <glm/glm.hpp>
@@ -54,7 +55,7 @@ protected:
 	glm::vec3 m_pos;
 	glm::vec3 m_vel;
 
-	//std::vector<Spring> springs;
+	std::vector<Spring> springs;
 	IntegrationMethod integrationMethod = FORWARD_EULER;
 	float timeStep = 0.01;
 	glm::vec3 gravity = glm::vec3(0, -9.8f, 0);

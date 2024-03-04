@@ -50,3 +50,17 @@ float Particle::getMass()
 	return mass;
 }
 
+
+void Particle::addSpringI(Spring* s) {
+	attachedToI.push_back(s);
+}
+void Particle::addSpringJ(Spring* s) {
+	attachedToJ.push_back(s);
+}
+std::vector<Spring*> Particle::getSpringsI() {
+	return attachedToI;
+}
+
+std::vector<Spring*> Particle::getSpringsI() {
+	return attachedToJ;
+}

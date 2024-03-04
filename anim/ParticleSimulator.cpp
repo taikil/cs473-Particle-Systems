@@ -22,24 +22,25 @@ glm::vec3 ParticleSimulator::integrateVelocity(glm::vec3 posi, glm::vec3 veli, f
 
 	switch (integrationMethod) {
 	case FORWARD_EULER:
-		// Forward Euler integration
 		pos[0] = posi[0] + veli[0] * dt;
 		pos[1] = posi[1] + veli[1] * dt;
 		pos[2] = posi[2] + veli[2] * dt;
 		break;
 
 	case SYMPLECTIC_EULER:
-		// Symplectic Euler integration
 		break;
 
 	case VERLET:
-		// Verlet integration
 		break;
 
 	default:
 		break;
 	}
 	return pos;
+}
+
+glm::vec3 springForce() {
+
 }
 
 int ParticleSimulator::step(double time)
@@ -54,7 +55,21 @@ int ParticleSimulator::step(double time)
 		float particleMass = particles->getParticleMass(i);
 
 		glm::vec3 totalForce = glm::vec3(0.0f, 0.0f, 0.0f);
+		// Sum of Spring Forces
+		for (int j = 0; i < springs.size(); i++) {
+			glm::vec2 indices = springs[i].getIndices();
+			//Compute fij
+			if (indices[0] == i) {
+				glm::vec3 coef = springs[i].getCoefficients();
+			}
+			// Compute fji
+			else if (indices[1] == i) { 
+				glm::vec3 coef = springs[i].getCoefficients();
+			}
+		}
+		//Velocity
 		totalForce += integrateVelocity(m_pos0, m_vel0, timeStep, time);
+		//Gravity
 		totalForce += (gravity * particleMass);
 
 		// Divide total force by particle mass to get acceleration
@@ -69,7 +84,7 @@ int ParticleSimulator::step(double time)
 		// Set the new position and velocity back to the particle
 		particles->setParticlePos(i, m_pos);
 		particles->setParticleVel(i, m_vel);
-			
+
 	}
 
 	return 0;
@@ -129,6 +144,26 @@ int ParticleSimulator::command(int argc, myCONST_SPEC char** argv)
 
 		glutPostRedisplay();
 		return TCL_OK;
+	}
+	else if (strcmp(argv[0], "spring") == 0) {
+		if (argc == 6)
+		{
+			int index1 = atoi(argv[1]);
+			int index2 = atoi(argv[2]);
+			float ks = static_cast<float>(atof(argv[3]));
+			float kd = static_cast<float>(atof(argv[4]));
+			float restLength = static_cast<float>(atof(argv[5]));
+
+			springs.push_back(Spring(index1, index2, restLength, ks, kd));
+			//particles[index1];
+
+			return TCL_OK;
+		}
+		else
+		{
+			animTcl::OutputMessage("Usage: simulator <sim_name> spring <index1> <index2> <ks> <kd> <restlength>");
+			return TCL_ERROR;
+		}
 	}
 	else
 	{
