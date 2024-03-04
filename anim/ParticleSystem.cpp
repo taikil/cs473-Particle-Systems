@@ -82,7 +82,7 @@ int ParticleSystem::command(int argc, myCONST_SPEC char** argv)
 			numParticles = atoi(argv[1]);
 			for (int i = 0; i < numParticles; i++) {
 				//std::string particleName = "Particle " + std::to_string(i);
-				Particle pn = Particle("Particle a");
+				Particle pn = Particle();
 				particles.push_back(pn);
 			}
 			glutPostRedisplay();
@@ -108,7 +108,7 @@ int ParticleSystem::command(int argc, myCONST_SPEC char** argv)
 				glm::vec3 velocity(static_cast<float>(atof(argv[6])),
 					static_cast<float>(atof(argv[7])),
 					static_cast<float>(atof(argv[8])));
-				particles[index] = Particle(sysName, position, velocity, mass);
+				particles[index] = Particle(position, velocity, mass);
 				glutPostRedisplay();
 				return TCL_OK;
 			}
