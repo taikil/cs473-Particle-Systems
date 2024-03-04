@@ -88,39 +88,13 @@ void myMotion(int x, int y)
 void MakeScene(void)
 {
 
-	/* 
-	
-	This is where you instantiate all objects, systems, and simulators and 
-	register them with the global resource manager
-
-	*/
-
-	/* SAMPLE SCENE */
-
 	bool success;
 
 	// Create systems
-	//SampleParticle* sphere1 = new SampleParticle( "sphere1" );
 
 	ParticleSystem* particles = new ParticleSystem( "particles" );
 
-	// Register systems
-	//success = GlobalResourceManager::use()->addSystem( sphere1, true );
-	// make sure it was registered successfully
-	//assert( success );
-
 	success = GlobalResourceManager::use()->addSystem( particles, true );
-	
-
-	// Create simulators
-	//SampleGravitySimulator* gravSim1 = new SampleGravitySimulator("grav1", sphere1);
-
-
-	// Register simulators
-	//success = GlobalResourceManager::use()->addSimulator(gravSim1);
-
-	// make sure it was registered successfully
-	//assert( success );
 
 	ParticleSimulator* particleSim = new ParticleSimulator("particleSim", particles);
 
@@ -134,24 +108,14 @@ void MakeScene(void)
 
 	/* END SAMPLE SCENE */
 
-	// the following code shows you how to retrieve a system that was registered 
-	// with the resource manager. 
 
 	BaseSystem* sampleSystemRetrieval;
-
-	// retrieve the system
-	//sampleSystemRetrieval = 
-		//GlobalResourceManager::use()->getSystem( "sphere1" );
-
-	// make sure you got it
-	//assert( sampleSystemRetrieval );
 
 	sampleSystemRetrieval = 
 		GlobalResourceManager::use()->getSystem( "particles" );
 
 	// make sure you got it
 	assert( sampleSystemRetrieval );
-
 
 
 	BaseSimulator* sampleSimulatorRetrieval;

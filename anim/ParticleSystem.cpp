@@ -2,9 +2,12 @@
 
 ParticleSystem::ParticleSystem(const std::string& name) :
 	BaseSystem(name),
-	m_sx(0.5f),
-	m_sy(0.5f),
-	m_sz(0.5f)
+	//m_sx(0.5f),
+	//m_sy(0.5f),
+	//m_sz(0.5f)
+	m_sx(1.0f),
+	m_sy(1.0f),
+	m_sz(1.0f)
 {
 	p_pos = glm::vec3(0.0, 0.0, 0.0);
 	p_vel = glm::vec3(0.0, 0.0, 0.0);
@@ -71,10 +74,11 @@ int ParticleSystem::command(int argc, myCONST_SPEC char** argv)
 	{
 		if (argc == 2)
 		{
+			particles.clear();
 			numParticles = atoi(argv[1]);
 			for (int i = 0; i < numParticles; i++) {
-				std::string particleName = "Particle " + std::to_string(i);
-				Particle pn = Particle(particleName);
+				//std::string particleName = "Particle " + std::to_string(i);
+				Particle pn = Particle("Particle a");
 				particles.push_back(pn);
 			}
 			glutPostRedisplay();
@@ -100,7 +104,7 @@ int ParticleSystem::command(int argc, myCONST_SPEC char** argv)
 				glm::vec3 velocity(static_cast<float>(atof(argv[6])),
 					static_cast<float>(atof(argv[7])),
 					static_cast<float>(atof(argv[8])));
-				particles[index] = Particle(sysName, position, velocity);
+				particles[index] = Particle(sysName, position, velocity, mass);
 				glutPostRedisplay();
 				return TCL_OK;
 			}

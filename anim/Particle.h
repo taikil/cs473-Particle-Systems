@@ -26,7 +26,7 @@ class Particle : public BaseSystem
 
 public:
     Particle(const std::string& name);
-    Particle(const std::string& name, const glm::vec3& initialPosition, const glm::vec3& initialVelocity);
+    Particle(const std::string& name, const glm::vec3& initialPosition, const glm::vec3& initialVelocity, const float m);
     virtual void getState(double* p);
     virtual void setState(double* p);
     glm::vec3 getPos();
@@ -38,7 +38,6 @@ public:
     void display(GLenum mode = GL_RENDER);
 
     void readModel(char* fname) { m_model.ReadOBJ(fname); }
-    void flipNormals(void) { glmReverseWinding(&m_model); }
     int command(int argc, myCONST_SPEC char** argv);
 
 protected:
@@ -48,7 +47,10 @@ protected:
     float m_sz;
 
     glm::vec3 p_pos;
+    glm::vec3 p_pos0;
     glm::vec3 p_vel;
+    glm::vec3 p_vel0;
+    float mass;
 
     GLMmodel m_model;
 

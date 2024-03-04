@@ -9,9 +9,11 @@ Particle::Particle(const std::string& name) :
 {
 	p_pos = glm::vec3(0.0, 0.0, 0.0);
 	p_vel = glm::vec3(0.0, 0.0, 0.0);
+	p_pos0 = glm::vec3(0.0, 0.0, 0.0);
+	p_vel0 = glm::vec3(0.0, 0.0, 0.0);
 }
 
-Particle::Particle(const std::string& name, const glm::vec3& initialPosition, const glm::vec3& initialVelocity) :
+Particle::Particle(const std::string& name, const glm::vec3& initialPosition, const glm::vec3& initialVelocity, const float m) :
 	BaseSystem(name),
 	m_sx(1.0f),
 	m_sy(1.0f),
@@ -19,6 +21,9 @@ Particle::Particle(const std::string& name, const glm::vec3& initialPosition, co
 {
 	p_pos = initialPosition;
 	p_vel = initialVelocity;
+	p_pos0 = initialPosition;
+	p_vel0 = initialVelocity;
+	mass = m;
 }
 
 void Particle::getState(double* p)
@@ -36,7 +41,8 @@ void Particle::setState(double* p)
 
 void Particle::reset(double time)
 {
-	p_pos = glm::vec3(0.0f, 0.0f, 0.0f);
+	p_pos = p_pos0;
+	p_vel = p_vel0;
 }
 
 glm::vec3 Particle::getPos() 
@@ -109,16 +115,6 @@ int Particle::command(int argc, myCONST_SPEC char** argv)
 			return TCL_ERROR;
 		}
 	}
-	else if (strcmp(argv[0], "flipNormals") == 0)
-	{
-		flipNormals();
-		return TCL_OK;
-	}
-	else if (strcmp(argv[0], "reset") == 0)
-	{
-		//setState(glm::vec3(0.0f, 0.0f, 0.0f));
-	}
-
 	glutPostRedisplay();
 	return TCL_OK;
 }

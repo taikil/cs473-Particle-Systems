@@ -1,5 +1,7 @@
 #include "ResourceManager.h"
 
+double SIMULATION_TIME_STEP = 0.01;  // Define the variable
+
 ResourceManager::ResourceManager(void)
 {
 }

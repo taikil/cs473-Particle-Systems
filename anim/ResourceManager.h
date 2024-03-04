@@ -21,7 +21,7 @@ typedef std::set< BaseObject* > DisplayList;
 
 typedef std::map< std::string, BaseObject* > DatabaseOfObjects;
 
-const double SIMULATION_TIME_STEP = 0.01 ;
+extern double SIMULATION_TIME_STEP;
 
 class ResourceManager
 {
