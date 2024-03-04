@@ -33,6 +33,7 @@ public:
     int getNumParticles();
     glm::vec3 getParticlePos(int index);
     glm::vec3 getParticleVel(int index);
+    float getParticleMass(int index);
     void setParticlePos(int index, glm::vec3 pos);
     void setParticleVel(int index, glm::vec3 vel);
     void reset(double time);

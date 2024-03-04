@@ -38,7 +38,7 @@ public:
 	void setGroundParameters(float ks, float kd);
 	void setTimeStep(float dt);
 
-	glm::vec3 computeGravity(glm::vec3 posi, glm::vec3 veli, float dt, float time);
+	glm::vec3 integrateVelocity(glm::vec3 posi, glm::vec3 veli, float dt, float time);
 	int step(double time);
 	int init(double time)
 	{
@@ -55,9 +55,9 @@ protected:
 	glm::vec3 m_vel;
 
 	//std::vector<Spring> springs;
-	IntegrationMethod integrationMethod;
+	IntegrationMethod integrationMethod = FORWARD_EULER;
 	float timeStep = 0.01;
-	float gravity = -0.098; //Nice n slow
+	glm::vec3 gravity = glm::vec3(0, -9.8f, 0);
 	float groundKs;
 	float groundKd;
 

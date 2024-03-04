@@ -15,12 +15,30 @@ void ParticleSimulator::setTimeStep(float dt) {
 	timeStep = dt;
 }
 
-glm::vec3 ParticleSimulator::computeGravity(glm::vec3 posi, glm::vec3 veli, float dt, float time)
+glm::vec3 ParticleSimulator::integrateVelocity(glm::vec3 posi, glm::vec3 veli, float dt, float time)
 {
-	glm::vec3 pos;
-	pos[0] = posi[0] + veli[0] * dt;
-	pos[1] = posi[1] + veli[1] * dt + 0.5 * gravity * time * time;
-	pos[2] = posi[2] + veli[2] * dt;
+
+	glm::vec3 pos = posi;
+
+	switch (integrationMethod) {
+	case FORWARD_EULER:
+		// Forward Euler integration
+		pos[0] = posi[0] + veli[0] * dt;
+		pos[1] = posi[1] + veli[1] * dt;
+		pos[2] = posi[2] + veli[2] * dt;
+		break;
+
+	case SYMPLECTIC_EULER:
+		// Symplectic Euler integration
+		break;
+
+	case VERLET:
+		// Verlet integration
+		break;
+
+	default:
+		break;
+	}
 	return pos;
 }
 
@@ -33,10 +51,25 @@ int ParticleSimulator::step(double time)
 	for (int i = 0; i < numP; i++) {
 		m_pos0 = particles->getParticlePos(i);
 		m_vel0 = particles->getParticleVel(i);
-		animTcl::OutputMessage("Pos:  %.3f %.3f %.3f ", m_pos0.x, m_pos0.y, m_pos0.z);
-		m_pos = computeGravity(m_pos0, m_vel0, timeStep, time + timeStep);
-			
+		float particleMass = particles->getParticleMass(i);
+
+		glm::vec3 totalForce = glm::vec3(0.0f, 0.0f, 0.0f);
+		totalForce += integrateVelocity(m_pos0, m_vel0, timeStep, time);
+		totalForce += (gravity * particleMass);
+
+		// Divide total force by particle mass to get acceleration
+		glm::vec3 acceleration = totalForce / particleMass; // Assuming particleMass is a member variable
+
+		// Update velocity using the acceleration
+		m_vel = m_vel0 + acceleration * timeStep;
+
+		// Update position using the updated velocity
+		m_pos = m_pos0 + m_vel * timeStep;
+
+		// Set the new position and velocity back to the particle
 		particles->setParticlePos(i, m_pos);
+		particles->setParticleVel(i, m_vel);
+			
 	}
 
 	return 0;

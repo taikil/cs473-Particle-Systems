@@ -38,6 +38,10 @@ glm::vec3 ParticleSystem::getParticlePos(int index) {
 glm::vec3 ParticleSystem::getParticleVel(int index) {
 	return particles[index].getVel();
 }
+
+float ParticleSystem::getParticleMass(int index) {
+	return particles[index].getMass();
+}
 void ParticleSystem::setParticlePos(int index, glm::vec3 pos)
 {
 	particles[index].setPos(pos);

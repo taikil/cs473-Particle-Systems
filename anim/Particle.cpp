@@ -11,6 +11,7 @@ Particle::Particle(const std::string& name) :
 	p_vel = glm::vec3(0.0, 0.0, 0.0);
 	p_pos0 = glm::vec3(0.0, 0.0, 0.0);
 	p_vel0 = glm::vec3(0.0, 0.0, 0.0);
+	mass = 1.0;
 }
 
 Particle::Particle(const std::string& name, const glm::vec3& initialPosition, const glm::vec3& initialVelocity, const float m) :
@@ -63,6 +64,11 @@ void Particle::setPos(glm::vec3 pos)
 void Particle::setVel(glm::vec3 vel)
 {
 	p_vel = vel;
+}
+
+float Particle::getMass()
+{
+	return mass;
 }
 
 int Particle::command(int argc, myCONST_SPEC char** argv)

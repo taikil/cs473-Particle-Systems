@@ -31,6 +31,7 @@ public:
     virtual void setState(double* p);
     glm::vec3 getPos();
     glm::vec3 getVel();
+    float getMass();
     void setPos(glm::vec3 pos);
     void setVel(glm::vec3 vel);
     void reset(double time);
