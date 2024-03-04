@@ -102,7 +102,7 @@ void MakeScene(void)
 	// Create systems
 	//SampleParticle* sphere1 = new SampleParticle( "sphere1" );
 
-	Particle* particles = new Particle( "particles" );
+	ParticleSystem* particles = new ParticleSystem( "particles" );
 
 	// Register systems
 	//success = GlobalResourceManager::use()->addSystem( sphere1, true );

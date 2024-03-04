@@ -10,6 +10,7 @@
 #include "BaseSimulator.h"
 #include "BaseSystem.h"
 #include "Particle.h"
+#include "ParticleSystem.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -27,7 +28,7 @@ class ParticleSimulator : public BaseSimulator
 {
 public:
 
-	ParticleSimulator(const std::string& name, BaseSystem* target);
+	ParticleSimulator(const std::string& name, ParticleSystem* target);
 	~ParticleSimulator();
 	void addParticle(float mass, glm::vec3 position, glm::vec3 velocity);
 	//void addSpring(int particleIndex1, int particleIndex2, float ks, float kd, float restLength);
@@ -38,8 +39,7 @@ public:
 	int step(double time);
 	int init(double time)
 	{
-		m_object->getState(m_pos0);
-		setVector(m_vel0, 0, 0, 0);
+		m_pos0 = particles->getParticlePos(0);
 		return 0;
 	};
 
@@ -47,21 +47,20 @@ public:
 
 protected:
 
-	Vector m_pos0; // initial position
-	Vector m_vel0; // initial velocity
-	Vector m_pos;
-	Vector m_vel;
+	glm::vec3 m_pos0; // initial position
+	glm::vec3 m_vel0; // initial velocity
+	glm::vec3 m_pos;
+	glm::vec3 m_vel;
 
-	std::vector<Particle> particles;
 	//std::vector<Spring> springs;
 	IntegrationMethod integrationMethod;
 	float timeStep;
-	glm::vec3 gravity;
+	glm::vec3 gravity = glm::vec3(0, -9.8, 0);
 	float groundKs;
 	float groundKd;
 
 
-	BaseSystem* m_object;
+	ParticleSystem* particles;
 
 };
 

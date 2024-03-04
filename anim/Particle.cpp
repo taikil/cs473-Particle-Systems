@@ -39,9 +39,24 @@ void Particle::reset(double time)
 	p_pos = glm::vec3(0.0f, 0.0f, 0.0f);
 }
 
-void Particle::setVelocity(const glm::vec3& velocity)
+glm::vec3 Particle::getPos() 
 {
-	p_vel = velocity;
+	return p_pos;
+}
+
+glm::vec3 Particle::getVel() {
+	return p_vel;
+}
+
+void Particle::setPos(glm::vec3 pos)
+{
+	p_pos = pos;
+	//animTcl::OutputMessage("Pos:  %.3f %.3f %.3f ", pos.x, pos.y, pos.z);
+}
+
+void Particle::setVel(glm::vec3 vel)
+{
+	p_vel = vel;
 }
 
 int Particle::command(int argc, myCONST_SPEC char** argv)
@@ -124,10 +139,10 @@ void Particle::display(GLenum mode)
 
 	//glTranslated(p_pos.x, p_pos.y, p_pos.z);
 	//glScalef(m_sx, m_sy, m_sz);
-	glColor3f(0.3, 0.7, 0.1);
+	glColor3f(0.3, 0.1, 0.7);
 
 	//glutSolidSphere(0.3, 20, 20);
-	glVertex3f(p_pos.x, p_pos.y, p_pos.z);
+	//glVertex3f(p_pos.x, p_pos.y, p_pos.z);
 	glEnd();
 
 	glPopMatrix();

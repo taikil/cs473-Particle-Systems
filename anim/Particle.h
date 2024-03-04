@@ -29,9 +29,11 @@ public:
     Particle(const std::string& name, const glm::vec3& initialPosition, const glm::vec3& initialVelocity);
     virtual void getState(double* p);
     virtual void setState(double* p);
+    glm::vec3 getPos();
+    glm::vec3 getVel();
+    void setPos(glm::vec3 pos);
+    void setVel(glm::vec3 vel);
     void reset(double time);
-
-    void setVelocity(const glm::vec3& velocity); 
 
     void display(GLenum mode = GL_RENDER);
 

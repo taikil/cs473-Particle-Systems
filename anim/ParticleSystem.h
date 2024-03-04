@@ -30,6 +30,11 @@ public:
     ParticleSystem(const std::string& name);
     virtual void getState(double* p);
     virtual void setState(double* p);
+    int getNumParticles();
+    glm::vec3 getParticlePos(int index);
+    glm::vec3 getParticleVel(int index);
+    void setParticlePos(int index, glm::vec3 pos);
+    void setParticleVel(int index, glm::vec3 vel);
     void reset(double time);
 
     void display(GLenum mode = GL_RENDER);
