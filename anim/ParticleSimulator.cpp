@@ -15,6 +15,32 @@ void ParticleSimulator::setTimeStep(float dt) {
 	timeStep = dt;
 }
 
+glm::vec3 ParticleSimulator::springForce(glm::vec3 posi, glm::vec3 posj, glm::vec3 springParams) {
+	float restLen = springParams[0];
+	float ks = springParams[1];
+	float kd = springParams[2];
+	// | xi - xj |
+	float posLen = glm::length(posi - posj);
+	//xi - xj / | xi - xj |
+	glm::vec3 normalized = glm::normalize(posi - posj);
+	// ks(len - | xi - xj |) * (xi - xj / |xi - xj |)
+	return ks * (restLen - posLen) * normalized;
+
+}
+
+glm::vec3 ParticleSimulator::damperForce(glm::vec3 posi, glm::vec3 veli, glm::vec3 posj, glm::vec3 velj, glm::vec3 springParams) {
+	float restLen = springParams[0];
+	float ks = springParams[1];
+	float kd = springParams[2];
+	// | xi - xj |
+	float velLen = glm::length(veli- velj);
+	//xi - xj / | xi - xj |
+	glm::vec3 normalized = glm::normalize(posi - posj);
+	// ks(len - | xi - xj |) * (xi - xj / |xi - xj |)
+	return -kd * (velLen * normalized) * normalized;
+
+}
+
 glm::vec3 ParticleSimulator::integrateVelocity(glm::vec3 posi, glm::vec3 veli, float dt, float time)
 {
 
