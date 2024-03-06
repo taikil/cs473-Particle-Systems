@@ -90,7 +90,6 @@ int ParticleSystem::command(int argc, myCONST_SPEC char** argv)
 			numParticles = atoi(argv[1]);
 			for (int i = 0; i < numParticles; i++) {
 				//std::string particleName = "Particle " + std::to_string(i);
-				animTcl::OutputMessage("adding particle .%3f", i);
 				Particle pn = Particle();
 				particles.push_back(pn);
 			}

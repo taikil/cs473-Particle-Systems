@@ -83,12 +83,8 @@ glm::vec3 ParticleSimulator::handleSprings(int i) {
 	for (int j = 0; j < springs.size(); j++) {
 		int indexI = springs[j].getI();
 		int indexJ = springs[j].getJ();
-		animTcl::OutputMessage("index:  %.3f %.3f %.3f ", indexI, indexJ);
 		//Compute fij
 		if (indexI == i || indexJ == i) {
-			if (i == 2) {
-				animTcl::OutputMessage("2!!!!");
-			}
 			glm::vec3 coef = springs[j].getCoefficients();
 			glm::vec3 posi = particles->getParticlePos(indexI);
 			glm::vec3 veli = particles->getParticleVel(indexI);
@@ -126,7 +122,6 @@ int ParticleSimulator::step(double time)
 		glm::vec3 totalForce = glm::vec3(0.0f, 0.0f, 0.0f);
 		// Sum of Spring Forces
 		totalForce += handleSprings(i);
-		animTcl::OutputMessage("force:  %.3f %.3f %.3f ", totalForce.x, totalForce.y, totalForce.z);
 
 		//Velocity
 		//totalForce += integrateVelocity(m_pos0, m_vel0, timeStep, time);
@@ -137,7 +132,6 @@ int ParticleSimulator::step(double time)
 		// Divide total force by particle mass to get acceleration
 		glm::vec3 acceleration = totalForce / particleMass;
 		glm::length(totalForce) == 0 ? acceleration = glm::vec3(0.0f, 0.0f, 0.0f) : void(0);
-		animTcl::OutputMessage("accel:  %.3f %.3f %.3f ", acceleration.x, acceleration.y, acceleration.z);
 
 		// Update velocity using the acceleration
 		m_vel = m_vel0 + acceleration * timeStep;
