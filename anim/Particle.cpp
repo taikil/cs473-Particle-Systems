@@ -37,7 +37,7 @@ glm::vec3 Particle::getVel() {
 void Particle::setPos(glm::vec3 pos)
 {
 	p_pos = pos;
-	//animTcl::OutputMessage("Pos:  %.3f %.3f %.3f ", pos.x, pos.y, pos.z);
+	animTcl::OutputMessage("Pos:  %.3f %.3f %.3f ", pos.x, pos.y, pos.z);
 }
 
 void Particle::setVel(glm::vec3 vel)

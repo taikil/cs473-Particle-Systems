@@ -15,17 +15,25 @@ void ParticleSimulator::setTimeStep(float dt) {
 	timeStep = dt;
 }
 
+void ParticleSimulator::setGravity(float g)
+{
+	gravity.y = g;
+}
+
+
 glm::vec3 ParticleSimulator::springForce(glm::vec3 posi, glm::vec3 posj, glm::vec3 springParams) {
 	float restLen = springParams[0];
 	float ks = springParams[1];
 	float kd = springParams[2];
 	// | xi - xj |
-	float posLen = glm::length(posi - posj);
-	//xi - xj / | xi - xj |
-	glm::vec3 normalized = glm::normalize(posi - posj);
+	glm::vec3 delta = posi - posj;
+	float posLen = glm::length(delta);
+
+	// Check if the length is greater than a small threshold
+	glm::vec3 normalized = (posLen > 0.0001f) ? glm::normalize(delta) : glm::vec3(0.0f);
+
 	// ks(len - | xi - xj |) * (xi - xj / |xi - xj |)
 	return ks * (restLen - posLen) * normalized;
-
 }
 
 glm::vec3 ParticleSimulator::damperForce(glm::vec3 posi, glm::vec3 veli, glm::vec3 posj, glm::vec3 velj, glm::vec3 springParams) {
@@ -33,13 +41,16 @@ glm::vec3 ParticleSimulator::damperForce(glm::vec3 posi, glm::vec3 veli, glm::ve
 	float ks = springParams[1];
 	float kd = springParams[2];
 	// | xi - xj |
+	glm::vec3 delta = posi - posj;
 	float velLen = glm::length(veli - velj);
-	//xi - xj / | xi - xj |
-	glm::vec3 normalized = glm::normalize(posi - posj);
+
+	// Check if the length is greater than a small threshold
+	glm::vec3 normalized = (velLen > 0.0001f) ? glm::normalize(delta) : glm::vec3(0.0f);
+
 	// ks(len - | xi - xj |) * (xi - xj / |xi - xj |)
 	return -kd * (velLen * normalized) * normalized;
-
 }
+
 
 glm::vec3 ParticleSimulator::integrateVelocity(glm::vec3 posi, glm::vec3 veli, float dt, float time)
 {
@@ -69,19 +80,26 @@ glm::vec3 ParticleSimulator::handleSprings(int i) {
 	float particleMass = particles->getParticleMass(i);
 	glm::vec3 total = glm::vec3(0.0f, 0.0f, 0.0f);
 
-	for (int j = 0; i < springs.size(); i++) {
-		glm::vec2 indices = springs[i].getIndices();
+	for (int j = 0; j < springs.size(); j++) {
+		int indexI = springs[j].getI();
+		int indexJ = springs[j].getJ();
+		animTcl::OutputMessage("index:  %.3f %.3f %.3f ", indexI, indexJ);
 		//Compute fij
-		if (indices[0] == i || indices[1] == i) {
-			glm::vec3 coef = springs[i].getCoefficients();
-			glm::vec3 posj = particles->getParticlePos(indices[1]);
-			glm::vec3 velj = particles->getParticleVel(indices[1]);
+		if (indexI == i || indexJ == i) {
+			if (i == 2) {
+				animTcl::OutputMessage("2!!!!");
+			}
+			glm::vec3 coef = springs[j].getCoefficients();
+			glm::vec3 posi = particles->getParticlePos(indexI);
+			glm::vec3 veli = particles->getParticleVel(indexI);
+			glm::vec3 posj = particles->getParticlePos(indexJ);
+			glm::vec3 velj = particles->getParticleVel(indexJ);
 
-			glm::vec3 fs = springForce(m_pos0, posj, coef);
-			glm::vec3 fd = damperForce(m_pos0, m_vel0, posj, velj, coef);
+			glm::vec3 fs = springForce(posi, posj, coef);
+			glm::vec3 fd = damperForce(posi, veli, posj, velj, coef);
 			// if fji, negate force values
-			indices[1] == i ? fs = -fs : void(0);
-			indices[1] == i ? fd = -fd : void(0);
+			indexJ == i ? fs = -fs : void(0);
+			indexJ == i ? fd = -fd : void(0);
 			total += fs;
 			total += fd;
 		}
@@ -91,13 +109,16 @@ glm::vec3 ParticleSimulator::handleSprings(int i) {
 
 int ParticleSimulator::step(double time)
 {
-
 	std::vector<glm::vec3> newPos;
 	std::vector<glm::vec3> newVel;
-
 	int numP = particles->getNumParticles();
 
 	for (int i = 0; i < numP; i++) {
+		glm::vec3 m_pos0; // initial position
+		glm::vec3 m_vel0; // initial velocity
+		glm::vec3 m_pos;
+		glm::vec3 m_vel;
+
 		m_pos0 = particles->getParticlePos(i);
 		m_vel0 = particles->getParticleVel(i);
 		float particleMass = particles->getParticleMass(i);
@@ -105,13 +126,18 @@ int ParticleSimulator::step(double time)
 		glm::vec3 totalForce = glm::vec3(0.0f, 0.0f, 0.0f);
 		// Sum of Spring Forces
 		totalForce += handleSprings(i);
+		animTcl::OutputMessage("force:  %.3f %.3f %.3f ", totalForce.x, totalForce.y, totalForce.z);
+
 		//Velocity
-		totalForce += integrateVelocity(m_pos0, m_vel0, timeStep, time);
+		//totalForce += integrateVelocity(m_pos0, m_vel0, timeStep, time);
+
 		//Gravity
 		totalForce += (gravity * particleMass);
 
 		// Divide total force by particle mass to get acceleration
-		glm::vec3 acceleration = totalForce / particleMass; // Assuming particleMass is a member variable
+		glm::vec3 acceleration = totalForce / particleMass;
+		glm::length(totalForce) == 0 ? acceleration = glm::vec3(0.0f, 0.0f, 0.0f) : void(0);
+		animTcl::OutputMessage("accel:  %.3f %.3f %.3f ", acceleration.x, acceleration.y, acceleration.z);
 
 		// Update velocity using the acceleration
 		m_vel = m_vel0 + acceleration * timeStep;
@@ -126,8 +152,9 @@ int ParticleSimulator::step(double time)
 
 	//Assign new pos and velocity
 	for (int i = 0; i < numP; i++) {
-		particles->setParticlePos(i, m_pos);
-		particles->setParticleVel(i, m_vel);
+		//animTcl::OutputMessage("Pos:  %.3f %.3f %.3f ", newPos[i].x, newPos[i].y, newPos[i].z);
+		particles->setParticlePos(i, newPos[i]);
+		particles->setParticleVel(i, newVel[i]);
 	}
 
 	return 0;
@@ -187,6 +214,14 @@ int ParticleSimulator::command(int argc, myCONST_SPEC char** argv)
 
 		glutPostRedisplay();
 		return TCL_OK;
+	}
+	else if (strcmp(argv[0], "gravity") == 0) {
+		if (argc == 2)
+		{
+			float g = static_cast<float>(atof(argv[1]));
+			setGravity(g);
+			return TCL_OK;
+		}
 	}
 	else if (strcmp(argv[0], "spring") == 0) {
 		if (argc == 6)

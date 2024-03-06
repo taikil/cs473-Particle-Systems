@@ -8,6 +8,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <vector>
 
 #include "shared/opengl.h"
 
@@ -16,9 +17,9 @@ class Spring
 public:
 	Spring();
 	Spring(int i1, int i2, float rl, float ks, float kd);
-	glm::vec2 getIndices();
+	int getI();
+	int getJ();
 	glm::vec3 getCoefficients();
-	glm::vec3 computeForce();
 protected:
 	int index1;
 	int index2;

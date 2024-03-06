@@ -16,9 +16,12 @@ Spring::Spring(int i1, int i2, float rl, float ks, float kd) {
 	damping = kd;
 }
 
-glm::vec2 Spring::getIndices() {
-	glm::vec2 indices = glm::vec2(index1, index2);
-	return indices;
+int Spring::getI() {
+	return index1;
+}
+
+int Spring::getJ() {
+	return index2;
 }
 
 // rl, ks, kd

@@ -35,7 +35,7 @@ public:
 	void addParticle(float mass, glm::vec3 position, glm::vec3 velocity);
 	void addSpring(int particleIndex1, int particleIndex2, float ks, float kd, float restLength);
 	void setIntegrationMethod(IntegrationMethod method) { integrationMethod = method; }
-	void setGravity(glm::vec3 gravity);
+	void setGravity(float g);
 	void setGroundParameters(float ks, float kd);
 	void setTimeStep(float dt);
 
@@ -53,17 +53,13 @@ public:
 
 protected:
 
-	glm::vec3 m_pos0; // initial position
-	glm::vec3 m_vel0; // initial velocity
-	glm::vec3 m_pos;
-	glm::vec3 m_vel;
-
 	std::vector<Spring> springs;
 	IntegrationMethod integrationMethod = FORWARD_EULER;
 	float timeStep = 0.01;
-	glm::vec3 gravity = glm::vec3(0, -9.8f, 0);
-	float groundKs;
-	float groundKd;
+	glm::vec3 gravity = glm::vec3(0.0f, -9.8f, 0.0f);
+	//glm::vec3 gravity = glm::vec3(0.0f, 0.0f, 0.0f);
+	float groundKs = 300.0;
+	float groundKd = 50.0;
 
 
 	ParticleSystem* particles;

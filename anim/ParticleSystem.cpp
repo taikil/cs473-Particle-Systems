@@ -15,7 +15,6 @@ ParticleSystem::ParticleSystem(const std::string& name) :
 
 void ParticleSystem::getState(double* p)
 {
-	// Assuming p is a 3-element array to represent the particle position
 	p[0] = static_cast<double>(p_pos.x);
 	p[1] = static_cast<double>(p_pos.y);
 	p[2] = static_cast<double>(p_pos.z);
@@ -23,7 +22,6 @@ void ParticleSystem::getState(double* p)
 
 void ParticleSystem::setState(double* p)
 {
-	// Assuming p is a 3-element array representing the new particle position
 	p_pos = glm::vec3(static_cast<float>(p[0]), static_cast<float>(p[1]), static_cast<float>(p[2]));
 }
 
@@ -84,6 +82,7 @@ int ParticleSystem::command(int argc, myCONST_SPEC char** argv)
 			numParticles = atoi(argv[1]);
 			for (int i = 0; i < numParticles; i++) {
 				//std::string particleName = "Particle " + std::to_string(i);
+				animTcl::OutputMessage("adding particle .%3f", i);
 				Particle pn = Particle();
 				particles.push_back(pn);
 			}
@@ -162,16 +161,17 @@ void ParticleSystem::display(GLenum mode)
 	glEnable(GL_COLOR_MATERIAL);
 	glColor3f(0.4, 0.1, 0.7);
 	glPushMatrix();
+	glPushAttrib(GL_ALL_ATTRIB_BITS);
 	for (int i = 0; i < numParticles; i++) {
-		glPushAttrib(GL_ALL_ATTRIB_BITS);
+		glPushMatrix();
 		glm::vec3 pos = particles[i].getPos();
 		glTranslated(pos.x, pos.y, pos.z);
 		glScalef(m_sx, m_sy, m_sz);
-
 		glutSolidSphere(0.3, 20, 20);
 
 		glPopMatrix();
 	}
 	glPopAttrib();
+	glPushMatrix();
 }
 
