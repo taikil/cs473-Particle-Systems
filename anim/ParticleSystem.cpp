@@ -7,7 +7,9 @@ ParticleSystem::ParticleSystem(const std::string& name) :
 	//m_sz(0.5f)
 	m_sx(1.0f),
 	m_sy(1.0f),
-	m_sz(1.0f)
+	m_sz(1.0f),
+	verticesi(),
+	verticesj()
 {
 	p_pos = glm::vec3(0.0, 0.0, 0.0);
 	p_vel = glm::vec3(0.0, 0.0, 0.0);
@@ -57,6 +59,12 @@ void ParticleSystem::reset(double time)
 	for (int i = 0; i < numParticles; i++) {
 		particles[i].reset(0);
 	}
+}
+
+void ParticleSystem::addSpring(int i, int j)
+{
+	verticesi.push_back(i);
+	verticesj.push_back(j);
 }
 
 int ParticleSystem::command(int argc, myCONST_SPEC char** argv)
@@ -153,6 +161,19 @@ int ParticleSystem::command(int argc, myCONST_SPEC char** argv)
 	return TCL_OK;
 }
 
+void ParticleSystem::displaySpring()
+{
+	glLineWidth(3);
+	for (int i = 0; i < verticesi.size(); i++) {
+		glBegin(GL_LINE_STRIP);
+		glm::vec3 posi = particles[verticesi[i]].getPos();
+		glm::vec3 posj = particles[verticesj[i]].getPos();
+		glVertex3f(posi.x, posi.y, posi.z);
+		glVertex3f(posj.x, posj.y, posj.z);
+		glEnd();
+	}
+}
+
 void ParticleSystem::display(GLenum mode)
 {
 	glEnable(GL_LIGHTING);
@@ -160,17 +181,23 @@ void ParticleSystem::display(GLenum mode)
 	glMatrixMode(GL_MODELVIEW);
 	glEnable(GL_COLOR_MATERIAL);
 	glColor3f(0.4, 0.1, 0.7);
+	glPointSize(8);
 	glPushMatrix();
 	glPushAttrib(GL_ALL_ATTRIB_BITS);
 	for (int i = 0; i < numParticles; i++) {
 		glPushMatrix();
 		glm::vec3 pos = particles[i].getPos();
+		//glBegin(GL_POINTS);
+		//glVertex3f(pos.x, pos.y, pos.z);
+		//glEnd();
 		glTranslated(pos.x, pos.y, pos.z);
 		glScalef(m_sx, m_sy, m_sz);
 		glutSolidSphere(0.3, 20, 20);
 
 		glPopMatrix();
 	}
+	glColor3f(0.1, 0.3, 0.8);
+	displaySpring();
 	glPopAttrib();
 	glPushMatrix();
 }

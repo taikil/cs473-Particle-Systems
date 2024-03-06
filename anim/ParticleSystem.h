@@ -37,8 +37,10 @@ public:
     void setParticlePos(int index, glm::vec3 pos);
     void setParticleVel(int index, glm::vec3 vel);
     void reset(double time);
+    void addSpring(int i, int j);
 
     void display(GLenum mode = GL_RENDER);
+    void displaySpring();
 
     void readModel(char* fname) { m_model.ReadOBJ(fname); }
     void flipNormals(void) { glmReverseWinding(&m_model); }
@@ -54,6 +56,8 @@ protected:
     glm::vec3 p_vel;
 
     int numParticles = 0;
+    std::vector<int> verticesi;
+    std::vector<int> verticesj;
 
 
     GLMmodel m_model;

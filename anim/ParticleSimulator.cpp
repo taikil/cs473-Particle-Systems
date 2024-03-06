@@ -233,6 +233,7 @@ int ParticleSimulator::command(int argc, myCONST_SPEC char** argv)
 			float restLength = static_cast<float>(atof(argv[5]));
 
 			springs.push_back(Spring(index1, index2, restLength, ks, kd));
+			particles->addSpring(index1, index2);
 			//particles[index1];
 
 			return TCL_OK;
