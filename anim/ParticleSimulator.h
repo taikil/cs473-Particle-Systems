@@ -61,6 +61,7 @@ protected:
 	//glm::vec3 gravity = glm::vec3(0.0f, 0.0f, 0.0f);
 	float groundKs = 300.0;
 	float groundKd = 50.0;
+	float globalKd = 0.5;
 	bool firstVerlet = false;
 
 

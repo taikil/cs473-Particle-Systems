@@ -163,6 +163,8 @@ int ParticleSimulator::step(double time)
 
 		glm::vec3 totalForce = glm::vec3(0.0f, 0.0f, 0.0f);
 
+		totalForce += -globalKd * m_vel0;
+
 		// Sum of Spring Forces
 		totalForce += handleSprings(i);
 
@@ -260,7 +262,7 @@ int ParticleSimulator::command(int argc, myCONST_SPEC char** argv)
 		}
 		else
 		{
-			animTcl::OutputMessage("Usage: integration gravity <g>");
+			animTcl::OutputMessage("Usage: simulator <sim_name> gravity <g>");
 			return TCL_ERROR;
 		}
 	}
@@ -285,7 +287,35 @@ int ParticleSimulator::command(int argc, myCONST_SPEC char** argv)
 		}
 		else
 		{
-			animTcl::OutputMessage("Usage: integration fix <index>");
+			animTcl::OutputMessage("Usage:  simulator <sim_name> fix <index>");
+			return TCL_ERROR;
+		}
+	}
+	else if (strcmp(argv[0], "ground") == 0) {
+
+		if (argc == 3) {
+			float ks = atoi(argv[1]);
+			float kd = atoi(argv[2]);
+			groundKs = ks;
+			groundKd = kd;
+			return TCL_OK;
+		}
+		else
+		{
+			animTcl::OutputMessage("Usage: simulator <sim_name> ground <ks> <kd> ");
+			return TCL_ERROR;
+		}
+	}
+	else if (strcmp(argv[0], "drag") == 0) {
+
+		if (argc == 2) {
+			float kdrag = atoi(argv[1]);
+			globalKd = glm::abs(kdrag);
+			return TCL_OK;
+		}
+		else
+		{
+			animTcl::OutputMessage("Usage:  simulator <sim_name> drag <kdrag>");
 			return TCL_ERROR;
 		}
 	}
