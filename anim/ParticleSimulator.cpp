@@ -22,9 +22,9 @@ void ParticleSimulator::setGravity(float g)
 
 
 glm::vec3 ParticleSimulator::springForce(glm::vec3 posi, glm::vec3 posj, glm::vec3 springParams) {
-	float restLen = springParams[0];
-	float ks = springParams[1];
-	float kd = springParams[2];
+	float restLen = springParams.x;
+	float ks = springParams.y;
+	float kd = springParams.z;
 	// | xi - xj |
 	glm::vec3 delta = posi - posj;
 	float posLen = glm::length(delta);
@@ -37,9 +37,9 @@ glm::vec3 ParticleSimulator::springForce(glm::vec3 posi, glm::vec3 posj, glm::ve
 }
 
 glm::vec3 ParticleSimulator::damperForce(glm::vec3 posi, glm::vec3 veli, glm::vec3 posj, glm::vec3 velj, glm::vec3 springParams) {
-	float restLen = springParams[0];
-	float ks = springParams[1];
-	float kd = springParams[2];
+	float restLen = springParams.x;
+	float ks = springParams.y;
+	float kd = springParams.z;
 	// | xi - xj |
 	glm::vec3 delta = posi - posj;
 	float velLen = glm::length(veli - velj);
@@ -52,19 +52,41 @@ glm::vec3 ParticleSimulator::damperForce(glm::vec3 posi, glm::vec3 veli, glm::ve
 }
 
 
-glm::vec3 ParticleSimulator::integrateVelocity(glm::vec3 posi, glm::vec3 veli, float dt, float time)
+glm::vec3 ParticleSimulator::integrateAcceleration(glm::vec3 veli, glm::vec3 acci, float dt, float time) 
+{
+
+	glm::vec3 vel = veli;
+
+	switch (integrationMethod) {
+	case FORWARD_EULER:
+		vel = veli + (acci * dt);
+		break;
+
+	case SYMPLECTIC_EULER:
+		vel = veli + (acci * dt);
+		break;
+
+	case VERLET:
+		break;
+
+	default:
+		break;
+	}
+	return vel;
+}
+
+glm::vec3 ParticleSimulator::integrateVelocity(glm::vec3 posi, glm::vec3 vel0, glm::vec3 veli, float dt, float time)
 {
 
 	glm::vec3 pos = posi;
 
 	switch (integrationMethod) {
 	case FORWARD_EULER:
-		pos[0] = posi[0] + veli[0] * dt;
-		pos[1] = posi[1] + veli[1] * dt;
-		pos[2] = posi[2] + veli[2] * dt;
+		pos = posi + (vel0 * dt);
 		break;
 
 	case SYMPLECTIC_EULER:
+		pos = posi + (veli * dt); // new Velocity
 		break;
 
 	case VERLET:
@@ -120,11 +142,9 @@ int ParticleSimulator::step(double time)
 		float particleMass = particles->getParticleMass(i);
 
 		glm::vec3 totalForce = glm::vec3(0.0f, 0.0f, 0.0f);
+
 		// Sum of Spring Forces
 		totalForce += handleSprings(i);
-
-		//Velocity
-		//totalForce += integrateVelocity(m_pos0, m_vel0, timeStep, time);
 
 		//Gravity
 		totalForce += (gravity * particleMass);
@@ -134,10 +154,12 @@ int ParticleSimulator::step(double time)
 		glm::length(totalForce) == 0 ? acceleration = glm::vec3(0.0f, 0.0f, 0.0f) : void(0);
 
 		// Update velocity using the acceleration
-		m_vel = m_vel0 + acceleration * timeStep;
+		m_vel = integrateAcceleration(m_vel0, acceleration, timeStep, time);
 
 		// Update position using the updated velocity
-		m_pos = m_pos0 + m_vel * timeStep;
+		//m_pos = m_pos0 + m_vel * timeStep;
+		m_pos = integrateVelocity(m_pos0, m_vel0, m_vel, timeStep, time);
+
 
 		// Set the new position and velocity to a temp array 
 		newPos.push_back(m_pos);
