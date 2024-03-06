@@ -34,6 +34,8 @@ public:
     void setPos(glm::vec3 pos);
     void setVel(glm::vec3 vel);
     void reset(double time);
+    void fix();
+    bool isFixed();
 
 protected:
     glm::vec3 p_pos;
@@ -41,6 +43,7 @@ protected:
     glm::vec3 p_vel;
     glm::vec3 p_vel0;
     float mass;
+    bool fixed = false;
 
 };
 #endif

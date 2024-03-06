@@ -25,6 +25,14 @@ void Particle::reset(double time)
 	p_vel = p_vel0;
 }
 
+void Particle::fix() {
+	fixed = true;
+}
+
+bool Particle::isFixed() {
+	return fixed;
+}
+
 glm::vec3 Particle::getPos() 
 {
 	return p_pos;

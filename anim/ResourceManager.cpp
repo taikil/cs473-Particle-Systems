@@ -262,8 +262,8 @@ void ResourceManager::setSimulationTime( double time )
 
 double ResourceManager::getSimulationTime() const
 {
-
-	return m_simulationTime;
+	float stepRatio = SIMULATION_TIME_STEP / 0.01;
+	return m_simulationTime * stepRatio;
 
 }	// ResourceManager::getSimulationTime
 

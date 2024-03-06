@@ -52,7 +52,7 @@ glm::vec3 ParticleSimulator::damperForce(glm::vec3 posi, glm::vec3 veli, glm::ve
 }
 
 
-glm::vec3 ParticleSimulator::integrateAcceleration(glm::vec3 veli, glm::vec3 acci, float dt, float time) 
+glm::vec3 ParticleSimulator::integrateAcceleration(glm::vec3 pos0, glm::vec3 veli, glm::vec3 acci, float dt, float time)
 {
 
 	glm::vec3 vel = veli;
@@ -67,6 +67,14 @@ glm::vec3 ParticleSimulator::integrateAcceleration(glm::vec3 veli, glm::vec3 acc
 		break;
 
 	case VERLET:
+		if (!firstVerlet) {
+			vel = veli + (acci * dt);
+		}
+		else {
+			glm::vec3 forwardPos = pos0 + (veli * dt);
+			glm::vec3 backwardPos = pos0 - (veli * dt);
+			vel = (forwardPos - backwardPos) / 2.0f * dt;
+		}
 		break;
 
 	default:
@@ -75,7 +83,7 @@ glm::vec3 ParticleSimulator::integrateAcceleration(glm::vec3 veli, glm::vec3 acc
 	return vel;
 }
 
-glm::vec3 ParticleSimulator::integrateVelocity(glm::vec3 posi, glm::vec3 vel0, glm::vec3 veli, float dt, float time)
+glm::vec3 ParticleSimulator::integrateVelocity(glm::vec3 posi, glm::vec3 vel0, glm::vec3 veli, glm::vec3 acci, float dt, float time)
 {
 
 	glm::vec3 pos = posi;
@@ -89,7 +97,19 @@ glm::vec3 ParticleSimulator::integrateVelocity(glm::vec3 posi, glm::vec3 vel0, g
 		pos = posi + (veli * dt); // new Velocity
 		break;
 
-	case VERLET:
+	case VERLET: // Euler for first step
+		//time == timeStep ? pos = posi + (vel0 * dt) : pos = 2.0f * posi - (vel0 * dt) + (dt * dt * acci);
+		if (!firstVerlet) {
+			// Forward Euler for the first step
+			animTcl::OutputMessage("First");
+			pos = posi + (vel0 * dt);
+			firstVerlet = true;
+		}
+		else {
+			// Verlet integration for subsequent steps
+			pos = 2.0f * posi - (vel0 * dt) + (acci * dt * dt);
+		}
+		animTcl::OutputMessage("Pos:  %.3f %.3f %.3f ", pos.x, pos.y, pos.z);
 		break;
 
 	default:
@@ -154,11 +174,11 @@ int ParticleSimulator::step(double time)
 		glm::length(totalForce) == 0 ? acceleration = glm::vec3(0.0f, 0.0f, 0.0f) : void(0);
 
 		// Update velocity using the acceleration
-		m_vel = integrateAcceleration(m_vel0, acceleration, timeStep, time);
+		m_vel = integrateAcceleration(m_pos0, m_vel0, acceleration, timeStep, time);
 
 		// Update position using the updated velocity
 		//m_pos = m_pos0 + m_vel * timeStep;
-		m_pos = integrateVelocity(m_pos0, m_vel0, m_vel, timeStep, time);
+		m_pos = integrateVelocity(m_pos0, m_vel0, m_vel, acceleration, timeStep, time);
 
 
 		// Set the new position and velocity to a temp array 
@@ -237,6 +257,36 @@ int ParticleSimulator::command(int argc, myCONST_SPEC char** argv)
 			float g = static_cast<float>(atof(argv[1]));
 			setGravity(g);
 			return TCL_OK;
+		}
+		else
+		{
+			animTcl::OutputMessage("Usage: integration gravity <g>");
+			return TCL_ERROR;
+		}
+	}
+	else if (strcmp(argv[0], "link") == 0) {
+		if (argc == 3) {
+			const char* systemName = argv[1];
+			int numSprings = atoi(argv[2]);
+
+			animTcl::OutputMessage("Simulator %s linked to Particle System %s with %d springs.", sysName, systemName, numSprings);
+			return TCL_OK;
+		}
+		else {
+			animTcl::OutputMessage("Usage: simulator <sim_name> link <sys name> <Number of Springs>");
+			return TCL_ERROR;
+		}
+	}
+
+	else if (strcmp(argv[0], "fix") == 0) {
+		if (argc == 2) {
+			int index = atoi(argv[1]);
+			particles->fixParticle(index);
+		}
+		else
+		{
+			animTcl::OutputMessage("Usage: integration fix <index>");
+			return TCL_ERROR;
 		}
 	}
 	else if (strcmp(argv[0], "spring") == 0) {

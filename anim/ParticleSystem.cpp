@@ -45,12 +45,25 @@ float ParticleSystem::getParticleMass(int index) {
 
 void ParticleSystem::setParticlePos(int index, glm::vec3 pos)
 {
+	bool fixed = particles[index].isFixed();
+	if (!fixed) 
+	{
 	particles[index].setPos(pos);
+	}
 }
 
 void ParticleSystem::setParticleVel(int index, glm::vec3 vel)
 {
-	particles[index].setVel(vel);
+	bool fixed = particles[index].isFixed();
+	if (!fixed)
+	{
+		particles[index].setVel(vel);
+	}
+}
+
+void ParticleSystem::fixParticle(int index)
+{
+	particles[index].fix();
 }
 
 
