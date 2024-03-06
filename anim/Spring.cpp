@@ -23,5 +23,5 @@ glm::vec2 Spring::getIndices() {
 
 // rl, ks, kd
 glm::vec3 Spring::getCoefficients() {
-	glm::vec3 coef = glm::vec3(restLength, stiffness, damping);
+	return glm::vec3(restLength, stiffness, damping);
 }

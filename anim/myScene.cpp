@@ -92,11 +92,11 @@ void MakeScene(void)
 
 	// Create systems
 
-	ParticleSystem* particles = new ParticleSystem( "particles" );
+	ParticleSystem* particles = new ParticleSystem( "partSys" );
 
 	success = GlobalResourceManager::use()->addSystem( particles, true );
 
-	ParticleSimulator* particleSim = new ParticleSimulator("particleSim", particles);
+	ParticleSimulator* particleSim = new ParticleSimulator("partSim", particles);
 
 
 	// Register simulators
@@ -112,7 +112,7 @@ void MakeScene(void)
 	BaseSystem* sampleSystemRetrieval;
 
 	sampleSystemRetrieval = 
-		GlobalResourceManager::use()->getSystem( "particles" );
+		GlobalResourceManager::use()->getSystem( "partSys" );
 
 	// make sure you got it
 	assert( sampleSystemRetrieval );
@@ -122,7 +122,7 @@ void MakeScene(void)
 
 	// retrieve the simulator
 	sampleSimulatorRetrieval = 
-		GlobalResourceManager::use()->getSimulator( "particleSim" );
+		GlobalResourceManager::use()->getSimulator( "partSim" );
 
 	// make sure you got it
 	assert( sampleSimulatorRetrieval );

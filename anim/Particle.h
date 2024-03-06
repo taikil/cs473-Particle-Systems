@@ -33,10 +33,6 @@ public:
     float getMass();
     void setPos(glm::vec3 pos);
     void setVel(glm::vec3 vel);
-    void addSpringI(Spring* s);
-    void addSpringJ(Spring* s);
-    std::vector<Spring*> getSpringsI();
-    std::vector<Spring*> getSpringsJ();
     void reset(double time);
 
 protected:
@@ -45,8 +41,6 @@ protected:
     glm::vec3 p_vel;
     glm::vec3 p_vel0;
     float mass;
-    std::vector<Spring*> attachedToI;
-    std::vector<Spring*> attachedToJ;
 
 };
 #endif

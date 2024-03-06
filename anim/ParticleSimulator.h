@@ -39,6 +39,7 @@ public:
 	void setGroundParameters(float ks, float kd);
 	void setTimeStep(float dt);
 
+	glm::vec3 handleSprings(int i);
 	glm::vec3 springForce(glm::vec3 posi, glm::vec3 posj, glm::vec3 springParams);
 	glm::vec3 damperForce(glm::vec3 posi, glm::vec3 veli, glm::vec3 posj, glm::vec3 velj, glm::vec3 springParams);
 	glm::vec3 integrateVelocity(glm::vec3 posi, glm::vec3 veli, float dt, float time);

@@ -33,7 +33,7 @@ glm::vec3 ParticleSimulator::damperForce(glm::vec3 posi, glm::vec3 veli, glm::ve
 	float ks = springParams[1];
 	float kd = springParams[2];
 	// | xi - xj |
-	float velLen = glm::length(veli- velj);
+	float velLen = glm::length(veli - velj);
 	//xi - xj / | xi - xj |
 	glm::vec3 normalized = glm::normalize(posi - posj);
 	// ks(len - | xi - xj |) * (xi - xj / |xi - xj |)
@@ -65,14 +65,36 @@ glm::vec3 ParticleSimulator::integrateVelocity(glm::vec3 posi, glm::vec3 veli, f
 	return pos;
 }
 
-glm::vec3 springForce() {
+glm::vec3 ParticleSimulator::handleSprings(int i) {
+	float particleMass = particles->getParticleMass(i);
+	glm::vec3 total = glm::vec3(0.0f, 0.0f, 0.0f);
 
+	for (int j = 0; i < springs.size(); i++) {
+		glm::vec2 indices = springs[i].getIndices();
+		//Compute fij
+		if (indices[0] == i || indices[1] == i) {
+			glm::vec3 coef = springs[i].getCoefficients();
+			glm::vec3 posj = particles->getParticlePos(indices[1]);
+			glm::vec3 velj = particles->getParticleVel(indices[1]);
+
+			glm::vec3 fs = springForce(m_pos0, posj, coef);
+			glm::vec3 fd = damperForce(m_pos0, m_vel0, posj, velj, coef);
+			// if fji, negate force values
+			indices[1] == i ? fs = -fs : void(0);
+			indices[1] == i ? fd = -fd : void(0);
+			total += fs;
+			total += fd;
+		}
+	}
+	return total;
 }
 
 int ParticleSimulator::step(double time)
 {
 
-	animTcl::OutputMessage("dt: %.3f", timeStep);
+	std::vector<glm::vec3> newPos;
+	std::vector<glm::vec3> newVel;
+
 	int numP = particles->getNumParticles();
 
 	for (int i = 0; i < numP; i++) {
@@ -82,17 +104,7 @@ int ParticleSimulator::step(double time)
 
 		glm::vec3 totalForce = glm::vec3(0.0f, 0.0f, 0.0f);
 		// Sum of Spring Forces
-		for (int j = 0; i < springs.size(); i++) {
-			glm::vec2 indices = springs[i].getIndices();
-			//Compute fij
-			if (indices[0] == i) {
-				glm::vec3 coef = springs[i].getCoefficients();
-			}
-			// Compute fji
-			else if (indices[1] == i) { 
-				glm::vec3 coef = springs[i].getCoefficients();
-			}
-		}
+		totalForce += handleSprings(i);
 		//Velocity
 		totalForce += integrateVelocity(m_pos0, m_vel0, timeStep, time);
 		//Gravity
@@ -107,10 +119,15 @@ int ParticleSimulator::step(double time)
 		// Update position using the updated velocity
 		m_pos = m_pos0 + m_vel * timeStep;
 
-		// Set the new position and velocity back to the particle
+		// Set the new position and velocity to a temp array 
+		newPos.push_back(m_pos);
+		newVel.push_back(m_vel);
+	}
+
+	//Assign new pos and velocity
+	for (int i = 0; i < numP; i++) {
 		particles->setParticlePos(i, m_pos);
 		particles->setParticleVel(i, m_vel);
-
 	}
 
 	return 0;
