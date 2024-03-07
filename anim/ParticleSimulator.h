@@ -44,6 +44,7 @@ public:
 	glm::vec3 damperForce(glm::vec3 posi, glm::vec3 veli, glm::vec3 posj, glm::vec3 velj, glm::vec3 springParams);
 	glm::vec3 integrateVelocity(glm::vec3 posi, glm::vec3 vel0, glm::vec3 veli, glm::vec3 acci, float dt, float time);
 	glm::vec3 integrateAcceleration(glm::vec3 posi, glm::vec3 veli, glm::vec3 acci, float dt, float time);
+	glm::vec3 handleGround(glm::vec3 pos, glm::vec3 vel);
 	int step(double time);
 	int init(double time)
 	{
@@ -58,7 +59,7 @@ protected:
 	IntegrationMethod integrationMethod = FORWARD_EULER;
 	float timeStep = 0.01;
 	glm::vec3 gravity = glm::vec3(0.0f, -9.8f, 0.0f);
-	//glm::vec3 gravity = glm::vec3(0.0f, 0.0f, 0.0f);
+	glm::vec3 groundPos = glm::vec3(0.0f, -5.0f, 0.0f);
 	float groundKs = 300.0;
 	float groundKd = 50.0;
 	float globalKd = 0.5;

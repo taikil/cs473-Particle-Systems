@@ -145,6 +145,19 @@ glm::vec3 ParticleSimulator::handleSprings(int i) {
 	return total;
 }
 
+glm::vec3 ParticleSimulator::handleGround(glm::vec3 pos, glm::vec3 vel) {
+	glm::vec3 groundNormal = glm::vec3(0.0f, 1.0f, 0.0f); // Assuming ground is in the y-direction
+
+	float penetrationDepth = glm::dot(pos, groundNormal);
+
+	if (penetrationDepth < 0.0f) {
+		glm::vec3 repulsionForce = -groundKs* penetrationDepth * groundNormal - groundKd * glm::dot(vel, groundNormal) * groundNormal;
+
+		return repulsionForce;
+	}
+
+}
+
 int ParticleSimulator::step(double time)
 {
 	std::vector<glm::vec3> newPos;
@@ -152,18 +165,18 @@ int ParticleSimulator::step(double time)
 	int numP = particles->getNumParticles();
 
 	for (int i = 0; i < numP; i++) {
-		glm::vec3 m_pos0; // initial position
-		glm::vec3 m_vel0; // initial velocity
-		glm::vec3 m_pos;
-		glm::vec3 m_vel;
+		glm::vec3 pos0; // initial position
+		glm::vec3 vel0; // initial velocity
+		glm::vec3 posNew;
+		glm::vec3 velNew;
 
-		m_pos0 = particles->getParticlePos(i);
-		m_vel0 = particles->getParticleVel(i);
+		pos0 = particles->getParticlePos(i);
+		vel0 = particles->getParticleVel(i);
 		float particleMass = particles->getParticleMass(i);
 
 		glm::vec3 totalForce = glm::vec3(0.0f, 0.0f, 0.0f);
 
-		totalForce += -globalKd * m_vel0;
+		totalForce += -globalKd * vel0;
 
 		// Sum of Spring Forces
 		totalForce += handleSprings(i);
@@ -171,21 +184,24 @@ int ParticleSimulator::step(double time)
 		//Gravity
 		totalForce += (gravity * particleMass);
 
+		//Ground
+		totalForce += handleGround(pos0, vel0);
+
 		// Divide total force by particle mass to get acceleration
 		glm::vec3 acceleration = totalForce / particleMass;
 		glm::length(totalForce) == 0 ? acceleration = glm::vec3(0.0f, 0.0f, 0.0f) : void(0);
 
 		// Update velocity using the acceleration
-		m_vel = integrateAcceleration(m_pos0, m_vel0, acceleration, timeStep, time);
+		velNew = integrateAcceleration(pos0, vel0, acceleration, timeStep, time);
 
 		// Update position using the updated velocity
 		//m_pos = m_pos0 + m_vel * timeStep;
-		m_pos = integrateVelocity(m_pos0, m_vel0, m_vel, acceleration, timeStep, time);
+		posNew = integrateVelocity(pos0, vel0, velNew, acceleration, timeStep, time);
 
 
 		// Set the new position and velocity to a temp array 
-		newPos.push_back(m_pos);
-		newVel.push_back(m_vel);
+		newPos.push_back(posNew);
+		newVel.push_back(velNew);
 	}
 
 	//Assign new pos and velocity
