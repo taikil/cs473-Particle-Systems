@@ -114,7 +114,7 @@ glm::vec3 ParticleSimulator::integrateVelocity(glm::vec3 posi, glm::vec3 vel0, g
 			// Verlet integration for subsequent steps
 			pos = (2.0f * posi) - (posi - vel0 * dt) + (acci * dt * dt);
 		}
-		animTcl::OutputMessage("Pos:  %.3f %.3f %.3f ", pos.x, pos.y, pos.z);
+		//animTcl::OutputMessage("Pos:  %.3f %.3f %.3f ", pos.x, pos.y, pos.z);
 		break;
 
 	default:
@@ -154,12 +154,14 @@ glm::vec3 ParticleSimulator::handleGround(glm::vec3 pos, glm::vec3 vel) {
 	glm::vec3 groundNormal = glm::vec3(0.0f, 1.0f, 0.0f);
 
 	float penetrationDepth = glm::dot(pos, groundNormal);
+	glm::vec3 repulsionForce = glm::vec3(0.0f);
 
 	if (penetrationDepth < 0.0f) {
-		glm::vec3 repulsionForce = -groundKs * penetrationDepth * groundNormal - groundKd * glm::dot(vel, groundNormal) * groundNormal;
+		repulsionForce = -groundKs * penetrationDepth * groundNormal - groundKd * glm::dot(vel, groundNormal) * groundNormal;
 
-		return repulsionForce;
 	}
+
+	return repulsionForce;
 
 }
 
@@ -185,12 +187,12 @@ int ParticleSimulator::step(double time)
 
 		// Sum of Spring Forces
 		totalForce += handleSprings(i);
-
 		//Gravity
 		totalForce += (gravity * particleMass);
 
 		//Ground
 		totalForce += handleGround(pos0, vel0);
+		//animTcl::OutputMessage("Force ground:  %.3f %.3f %.3f ", totalForce.x, totalForce.y, totalForce.z);
 
 		// Divide total force by particle mass to get acceleration
 		glm::vec3 acceleration = totalForce / particleMass;
