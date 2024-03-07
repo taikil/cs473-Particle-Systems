@@ -1,157 +1,61 @@
-------------------------------------
-TEMPLATE CODE FOR CSC 473
-------------------------------------
+Particle System Simulator - README
+Tai Kilpatrick - V00943861
 
-Prerequisites
---------------
+Completion Status
+Implemented Features:
+    [4] Particle system
+		Particle system working as normal
+    [4] Script commands
+		All commands implemented
+    [3] Forward Euler
+		Forward Euler implemented
+    [3] Verlet
+		Verlet approximation implemented
+    [3] Symplectic Euler
+		Symplectic Euler implemented
+    [4] Ground collision penalty forces
+		Ground collision working
+    [1] Gravity
+		Gravity added and adjustable
+    [1] Locking of a particle’s position
+		Particle locking functional
+    [2] Particle and spring drawing
+		Particles and springs drawn
 
-- Windows OS
-- Visual Studio
+Commands
+Particle System Commands:
 
-Start as follows:
+    system <sys_name> dim <Number of Particles>:
+        Initializes the particle system to hold up to the given number of particles.
+        Particles may be initialized to the origin of the world or added later.
 
-- Double click on cs473-2024.sln
-- Build the solution.
-- Run it
+    system <sys_name> particle <index> <mass> <x y z vx vy vz>:
+        Sets the position, mass, and velocity for a given particle.
 
-If everything worked fine you should see two windows. The first window is an 
-OpenGL window showing a soccer ball. The second window is a Tcl shell
+    system <sys_name> all_velocities <vx vy vz>:
+        Sets the velocity of all particles.
 
-If the program does not run, you can't see the soccer ball, or the shell window
-does not show any prompt, then something went wrong and you should talk to the TA.
+Simulator Commands:
 
-The executable is created in the "Build" folder. You can run the main program 
-outside Visual Studio by running the file "animp.exe"
+    simulator <sim_name> link <sys name> <Number of Springs>:
+        Links the simulator to a particular particle system and initializes it to work with a given number of springs.
 
-Interaction
-------------
+    simulator <sim_name> spring <index1> <index2> <ks> <kd> <restlength>:
+        Sets up a given spring.
+        If the rest length is negative, the system automatically sets it to the distance between the corresponding particles at the time of the command.
 
-- Moving the mouse with the right button pressed rotates the scene.
-- Moving the mouse with the middle button pressed zooms the scene
+    simulator <sim_name> fix <index>:
+        Nails particle <index> to its current position.
 
-The following key strokes are recognized:
+    simulator <sim_name> integration <euler|symplectic|verlet> <time step>:
+        Changes the integration technique used by the given simulator and sets the time step of the integration.
 
-- r	restore the original view
-- 0	reset all systems
-- a	toggle animation
-- s	toggle simulation
-- m	toggle frame dumping
-- t	reset all timers
-- q	quit
-- h	print these instructions
+    simulator <sim_name> ground <ks> <kd>:
+        Sets the parameters of the penalty forces applied to particles that try to go underground.
 
-Code
-------------
+    simulator <sim_name> gravity <g>:
+        Sets the acceleration due to gravity, in unit length per unit time squared.
 
-All classes that interact with the template must sub-class one the following
-classed depending what they are meant for:
-- BaseObject
-- BaseSystem
-- BaseSimulator
-
-The two classes SampleParticle and SampleGravitySimulator are examples of how
- to implement a system or a simulator
-
-In the file myScene.cpp look at the global function MakeScene for an example
-on how to instantiate objects and register them with the global resource manager.
-You should modify this function to instantiate your own classes.
-
-in myScene.cpp the following three functions are used for I/O
-
-- myKey		is triggered when the user presses a key
-- myMouse	is triggered when a mouse button even occurs
-- myMotion	is triggered when the user moves the mouse
-
-NOTE: don't touch the callback functions in anim.cpp
-
-Classes
-------------
-
-- BaseObject: is the base class for all objects that need to interact with the template
-code. This is only used for inanimate objects, so you most likely do not need to inherit
-from this one directly
-
-- BaseSystem: Any object that can be animated needs to inherit from this one. You MUST
-always overload the following two methods:
-	* BaseSystem::getState
-	* BaseSystem::setState
-
-NOTE: you decide the size of the pointer p passed to these methods.
-
-If you don't overload these methods correctly I made sure that an
- assertion failure is triggered at run-time
-
-You must also overload the display method and put your own OpenGL code in it for
-the system to be drawable.
-
-- BaseSimulator: is the base class for classes that encapsulate the code that 
-orchestrates the actual animation of other systems. You MUST overload the following
-methods:
-	* BaseSimulator::Step
-	* BaseSimulator::init
-
-Commands and the Shell
-------------
-
-The template code embeds a Tcl shell, which is very nice for debugging your programs.
-This shell understands standard Tcl commands plus some additional commands that we 
-specified
-
-The follwing two commands are built-in in the template:
-
-- "show system"				Shows a list of the names of all systems
-instantiated in the scene
-
-- "show simulator"			Shows a list of the names of all simulators
-instantiated in the scene
-
-- "system <name> <arg1> <arg2> ..."	Invokes system <name> with the given arguments
-
-- "simulator <name> <arg1> <arg2> ..."	Invokes simulator <name> with the given arguments
-
-Every time you invoke a system or a simulator from the shell, the "command" method of
-the corresponding object is called. Obviously, you should implement the command method for
-your own classes to interface with the shell!
-
-Adding global commands
-------------
-
-If you want to add global commands for the shell you should do the following:
-
-1) add a new global function with the same signature as the function testGlobalCommand in myScene.cpp
-2) return either TCL_OK or TCL_ERROR depending on whether your command was successful or not
-3) In the file myScene.cpp modify the function mySetScriptCommands and add a 
-new Tcl_CreateCommand call. Look at the sample command "test" to learn how
-to use it
-
-Startup script
-------------
-
-every time you run you program the console will automatically execute the script start.tcl at
-start up.  This script is located under the Build folder. For your projects you definitely 
-want to modify the sample script that is provided.
-
-Working directory
-----------------
-The working directory should be set to Build.
-
-Custom scripts
-------------
-
-You can run your own scripts by using the shell command "source <script_path>"
-
-Data folder
-------------
-
-The folder Build/data contains a few 3D models that you may use for your projects.
-
------------------------------------------
-
-============================================
-MacOSX/Linux
---------------------------------------------
-
-No longer supported directly. You need to install a VM, Boot camp, dual boot Windows, or use a Windows machine.
-
-
-
+    simulator <sim_name> drag <kdrag>:
+        Sets the global drag (friction) coefficient (Fi = -kdrag vi).
+        Expects a positive number.

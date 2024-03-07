@@ -21,6 +21,11 @@ void ParticleSimulator::setGravity(float g)
 }
 
 
+void ParticleSimulator::setGroundParameters(float ks, float kd) {
+	groundKs = ks;
+	groundKd = kd;
+}
+
 glm::vec3 ParticleSimulator::springForce(glm::vec3 posi, glm::vec3 posj, glm::vec3 springParams) {
 	float restLen = springParams.x;
 	float ks = springParams.y;
@@ -314,6 +319,7 @@ int ParticleSimulator::command(int argc, myCONST_SPEC char** argv)
 			float kd = atoi(argv[2]);
 			groundKs = ks;
 			groundKd = kd;
+			setGroundParameters(ks, kd);
 			return TCL_OK;
 		}
 		else
