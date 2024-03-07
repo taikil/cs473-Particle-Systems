@@ -52,29 +52,29 @@ glm::vec3 ParticleSimulator::damperForce(glm::vec3 posi, glm::vec3 veli, glm::ve
 }
 
 
-glm::vec3 ParticleSimulator::integrateAcceleration(glm::vec3 pos0, glm::vec3 veli, glm::vec3 acci, float dt, float time)
+glm::vec3 ParticleSimulator::integrateAcceleration(glm::vec3 pos0, glm::vec3 vel0, glm::vec3 acci, float dt)
 {
 
-	glm::vec3 vel = veli;
+	glm::vec3 vel = vel0;
 
 	switch (integrationMethod) {
 	case FORWARD_EULER:
-		vel = veli + (acci * dt);
+		vel = vel0 + (acci * dt);
 		break;
 
 	case SYMPLECTIC_EULER:
-		vel = veli + (acci * dt);
+		vel = vel0 + (acci * dt);
 		break;
 
 	case VERLET:
-		if (!firstVerlet) {
-			vel = veli + (acci * dt);
-		}
-		else {
-			glm::vec3 forwardPos = pos0 + (veli * dt);
-			glm::vec3 backwardPos = pos0 - (veli * dt);
-			vel = (forwardPos - backwardPos) / 2.0f * dt;
-		}
+		//if (!firstVerlet) {
+			vel = vel0 + (acci * dt);
+		//}
+		//else {
+		//	glm::vec3 forwardPos = pos0 + (vel0 * dt);
+		//	glm::vec3 backwardPos = pos0 - (vel0 * dt);
+		//	vel = (forwardPos - backwardPos) / (2.0f * dt);
+		//}
 		break;
 
 	default:
@@ -83,7 +83,7 @@ glm::vec3 ParticleSimulator::integrateAcceleration(glm::vec3 pos0, glm::vec3 vel
 	return vel;
 }
 
-glm::vec3 ParticleSimulator::integrateVelocity(glm::vec3 posi, glm::vec3 vel0, glm::vec3 veli, glm::vec3 acci, float dt, float time)
+glm::vec3 ParticleSimulator::integrateVelocity(glm::vec3 posi, glm::vec3 vel0, glm::vec3 velNew, glm::vec3 acci, float dt)
 {
 
 	glm::vec3 pos = posi;
@@ -94,11 +94,10 @@ glm::vec3 ParticleSimulator::integrateVelocity(glm::vec3 posi, glm::vec3 vel0, g
 		break;
 
 	case SYMPLECTIC_EULER:
-		pos = posi + (veli * dt); // new Velocity
+		pos = posi + (velNew * dt); // new Velocity
 		break;
 
 	case VERLET: // Euler for first step
-		//time == timeStep ? pos = posi + (vel0 * dt) : pos = 2.0f * posi - (vel0 * dt) + (dt * dt * acci);
 		if (!firstVerlet) {
 			// Forward Euler for the first step
 			animTcl::OutputMessage("First");
@@ -107,7 +106,7 @@ glm::vec3 ParticleSimulator::integrateVelocity(glm::vec3 posi, glm::vec3 vel0, g
 		}
 		else {
 			// Verlet integration for subsequent steps
-			pos = 2.0f * posi - (vel0 * dt) + (acci * dt * dt);
+			pos = (2.0f * posi) - (posi - vel0 * dt) + (acci * dt * dt);
 		}
 		animTcl::OutputMessage("Pos:  %.3f %.3f %.3f ", pos.x, pos.y, pos.z);
 		break;
@@ -146,12 +145,12 @@ glm::vec3 ParticleSimulator::handleSprings(int i) {
 }
 
 glm::vec3 ParticleSimulator::handleGround(glm::vec3 pos, glm::vec3 vel) {
-	glm::vec3 groundNormal = glm::vec3(0.0f, 1.0f, 0.0f); // Assuming ground is in the y-direction
+	glm::vec3 groundNormal = glm::vec3(0.0f, 1.0f, 0.0f);
 
 	float penetrationDepth = glm::dot(pos, groundNormal);
 
 	if (penetrationDepth < 0.0f) {
-		glm::vec3 repulsionForce = -groundKs* penetrationDepth * groundNormal - groundKd * glm::dot(vel, groundNormal) * groundNormal;
+		glm::vec3 repulsionForce = -groundKs * penetrationDepth * groundNormal - groundKd * glm::dot(vel, groundNormal) * groundNormal;
 
 		return repulsionForce;
 	}
@@ -192,11 +191,11 @@ int ParticleSimulator::step(double time)
 		glm::length(totalForce) == 0 ? acceleration = glm::vec3(0.0f, 0.0f, 0.0f) : void(0);
 
 		// Update velocity using the acceleration
-		velNew = integrateAcceleration(pos0, vel0, acceleration, timeStep, time);
+		velNew = integrateAcceleration(pos0, vel0, acceleration, timeStep);
 
 		// Update position using the updated velocity
 		//m_pos = m_pos0 + m_vel * timeStep;
-		posNew = integrateVelocity(pos0, vel0, velNew, acceleration, timeStep, time);
+		posNew = integrateVelocity(pos0, vel0, velNew, acceleration, timeStep);
 
 
 		// Set the new position and velocity to a temp array 
