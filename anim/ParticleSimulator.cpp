@@ -30,7 +30,7 @@ glm::vec3 ParticleSimulator::springForce(glm::vec3 posi, glm::vec3 posj, glm::ve
 	float posLen = glm::length(delta);
 
 	// Check if the length is greater than a small threshold
-	glm::vec3 normalized = (posLen > 0.0001f) ? glm::normalize(delta) : glm::vec3(0.0f);
+	glm::vec3 normalized = (posLen > 0.0001f) ? delta / posLen : glm::vec3(0.0f);
 
 	// ks(len - | xi - xj |) * (xi - xj / |xi - xj |)
 	return ks * (restLen - posLen) * normalized;
@@ -42,13 +42,14 @@ glm::vec3 ParticleSimulator::damperForce(glm::vec3 posi, glm::vec3 veli, glm::ve
 	float kd = springParams.z;
 	// | xi - xj |
 	glm::vec3 delta = posi - posj;
-	float velLen = glm::length(veli - velj);
+	float posLen = glm::length(delta);
+	glm::vec3 deltaVel = veli - velj;
 
 	// Check if the length is greater than a small threshold
-	glm::vec3 normalized = (velLen > 0.0001f) ? glm::normalize(delta) : glm::vec3(0.0f);
+	glm::vec3 normalized = (posLen > 0.0001f) ? delta / posLen : glm::vec3(0.0f);
 
 	// ks(len - | xi - xj |) * (xi - xj / |xi - xj |)
-	return -kd * (velLen * normalized) * normalized;
+	return -kd * (glm::dot(deltaVel, normalized)) * normalized;
 }
 
 
