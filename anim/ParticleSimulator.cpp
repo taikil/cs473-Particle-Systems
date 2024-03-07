@@ -73,8 +73,9 @@ glm::vec3 ParticleSimulator::integrateAcceleration(glm::vec3 pos0, glm::vec3 vel
 		break;
 
 	case VERLET:
+		// I had issues with the velocity when using verlet, 
 		//if (!firstVerlet) {
-			vel = vel0 + (acci * dt);
+		vel = vel0 + (acci * dt);
 		//}
 		//else {
 		//	glm::vec3 forwardPos = pos0 + (vel0 * dt);
@@ -183,6 +184,7 @@ int ParticleSimulator::step(double time)
 
 		glm::vec3 totalForce = glm::vec3(0.0f, 0.0f, 0.0f);
 
+		//Global Drag
 		totalForce += -globalKd * vel0;
 
 		// Sum of Spring Forces
@@ -192,7 +194,6 @@ int ParticleSimulator::step(double time)
 
 		//Ground
 		totalForce += handleGround(pos0, vel0);
-		//animTcl::OutputMessage("Force ground:  %.3f %.3f %.3f ", totalForce.x, totalForce.y, totalForce.z);
 
 		// Divide total force by particle mass to get acceleration
 		glm::vec3 acceleration = totalForce / particleMass;
@@ -202,7 +203,6 @@ int ParticleSimulator::step(double time)
 		velNew = integrateAcceleration(pos0, vel0, acceleration, timeStep);
 
 		// Update position using the updated velocity
-		//m_pos = m_pos0 + m_vel * timeStep;
 		posNew = integrateVelocity(pos0, vel0, velNew, acceleration, timeStep);
 
 

@@ -2,9 +2,6 @@
 
 ParticleSystem::ParticleSystem(const std::string& name) :
 	BaseSystem(name),
-	//m_sx(0.5f),
-	//m_sy(0.5f),
-	//m_sz(0.5f)
 	m_sx(1.0f),
 	m_sy(1.0f),
 	m_sz(1.0f),
@@ -46,9 +43,9 @@ float ParticleSystem::getParticleMass(int index) {
 void ParticleSystem::setParticlePos(int index, glm::vec3 pos)
 {
 	bool fixed = particles[index].isFixed();
-	if (!fixed) 
+	if (!fixed)
 	{
-	particles[index].setPos(pos);
+		particles[index].setPos(pos);
 	}
 }
 
@@ -196,15 +193,24 @@ void ParticleSystem::display(GLenum mode)
 	glPointSize(8);
 	glPushMatrix();
 	glPushAttrib(GL_ALL_ATTRIB_BITS);
+	if (numParticles > 50)
+	{
+
+	}
 	for (int i = 0; i < numParticles; i++) {
 		glPushMatrix();
 		glm::vec3 pos = particles[i].getPos();
-		//glBegin(GL_POINTS);
-		//glVertex3f(pos.x, pos.y, pos.z);
-		//glEnd();
-		glTranslated(pos.x, pos.y, pos.z);
-		glScalef(m_sx, m_sy, m_sz);
-		glutSolidSphere(0.3, 20, 20);
+		if (numParticles > 50) //Points if large amount of particles
+		{
+			glBegin(GL_POINTS);
+			glVertex3f(pos.x, pos.y, pos.z);
+			glEnd();
+		}
+		else {
+			glTranslated(pos.x, pos.y, pos.z);
+			glScalef(m_sx, m_sy, m_sz);
+			glutSolidSphere(0.3, 20, 20);
+		}
 
 		glPopMatrix();
 	}

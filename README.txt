@@ -8,11 +8,11 @@ Implemented Features:
     [4] Script commands
 		All commands implemented
     [3] Forward Euler
-		Forward Euler implemented
+		Forward Euler working
     [3] Verlet
-		Verlet approximation implemented
+		Verlet position approximation working, issues with velocity.
     [3] Symplectic Euler
-		Symplectic Euler implemented
+		Symplectic Euler working
     [4] Ground collision penalty forces
 		Ground collision working
     [1] Gravity

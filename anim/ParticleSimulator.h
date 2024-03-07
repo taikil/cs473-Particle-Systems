@@ -62,7 +62,7 @@ protected:
 	glm::vec3 groundPos = glm::vec3(0.0f, -5.0f, 0.0f);
 	float groundKs = 300.0;
 	float groundKd = 50.0;
-	float globalKd = 0.3;
+	float globalKd = 0.4;
 	bool firstVerlet = false;
 
 
